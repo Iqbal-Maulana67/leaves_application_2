@@ -1,9 +1,17 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:leaves_classification_application_nimas/result_page.dart';
+import 'package:http/http.dart' as http;
+import 'package:leaves_classification_application_nimas/results/brotowali_result.dart';
+import 'package:leaves_classification_application_nimas/results/pegagan_result.dart';
+import 'package:leaves_classification_application_nimas/results/rambusa_result.dart';
+import 'package:leaves_classification_application_nimas/results/rumput_minjangan_result.dart';
+import 'package:leaves_classification_application_nimas/results/sembung_rambat_result.dart';
+import 'package:leaves_classification_application_nimas/results/tumpang_air_result.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -46,10 +54,6 @@ class _CameraPage extends State<CameraPage> {
       setState(() {
         _capturedImagePath = photo.path;
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Foto berhasil diambil: ${photo.path}')),
-      );
     }
   }
 
@@ -63,107 +67,107 @@ class _CameraPage extends State<CameraPage> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gambar dipilih: ${image.path}')),
+        SnackBar(content: Text('Choosed Image: ${image.path}')),
       );
     }
   }
 
-  // Future<void> _uploadImage() async {
-  //   if (_capturedImagePath == null) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //           content: Text('Pilih atau ambil gambar terlebih dahulu')),
-  //     );
-  //     return;
-  //   }
+  Future<void> _uploadImage() async {
+    if (_capturedImagePath == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Pilih atau ambil gambar terlebih dahulu')),
+      );
+      return;
+    }
 
-  //   var uri = Uri.parse("http://192.168.1.5:8000/api/predict-id/");
-  //   var request = http.MultipartRequest('POST', uri)
-  //     ..files
-  //         .add(await http.MultipartFile.fromPath('gmbr', _capturedImagePath!));
+    var uri = Uri.parse("http://192.168.1.5:8000/api/predict-id/");
+    var request = http.MultipartRequest('POST', uri)
+      ..files
+          .add(await http.MultipartFile.fromPath('gmbr', _capturedImagePath!));
 
-  //   var response = await request.send();
+    var response = await request.send();
 
-  //   if (response.statusCode == 200) {
-  //     var responseData = await response.stream.bytesToString();
-  //     var jsonResponse = json.decode(responseData);
+    if (response.statusCode == 200) {
+      var responseData = await response.stream.bytesToString();
+      var jsonResponse = json.decode(responseData);
 
-  //     String plantClass = jsonResponse["class"];
-  //     double accuracy = jsonResponse["accuracy"];
-  //     double trimmedAccuracy = double.parse(accuracy.toStringAsFixed(1));
+      String plantClass = jsonResponse["class"];
+      double accuracy = jsonResponse["accuracy"];
+      double trimmedAccuracy = double.parse(accuracy.toStringAsFixed(1));
 
-  //     if (plantClass.toLowerCase() == "pegagan") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => PegaganResult(
-  //             accuracy: trimmedAccuracy,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     if (plantClass.toLowerCase() == "brotowali") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => BrotowaliResult(
-  //             accuracy: trimmedAccuracy,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     if (plantClass.toLowerCase() == "rambusa") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => RambusaResult(
-  //             accuracy: trimmedAccuracy,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     if (plantClass.toLowerCase() == "rumput minjangan") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => RumputMinjanganResult(
-  //             accuracy: trimmedAccuracy,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     if (plantClass.toLowerCase() == "sembung rambat") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => SembungRambatResult(
-  //             accuracy: trimmedAccuracy,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     if (plantClass.toLowerCase() == "tumpang air") {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => TumpangAirResult(
-  //             accuracy: trimmedAccuracy,
-  //           ),
-  //         ),
-  //       );
-  //     }
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text("Hasil: $plantClass (${accuracy.toStringAsFixed(2)}%)"),
-  //         duration: const Duration(seconds: 3),
-  //       ),
-  //     );
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Gagal mengunggah gambar')),
-  //     );
-  //   }
-  // }
+      if (plantClass.toLowerCase() == "pegagan") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PegaganResult(
+              accuracy: trimmedAccuracy,
+            ),
+          ),
+        );
+      }
+      if (plantClass.toLowerCase() == "brotowali") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BrotowaliResult(
+              accuracy: trimmedAccuracy,
+            ),
+          ),
+        );
+      }
+      if (plantClass.toLowerCase() == "rambusa") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RambusaResult(
+              accuracy: trimmedAccuracy,
+            ),
+          ),
+        );
+      }
+      if (plantClass.toLowerCase() == "rumput minjangan") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RumputMinjanganResult(
+              accuracy: trimmedAccuracy,
+            ),
+          ),
+        );
+      }
+      if (plantClass.toLowerCase() == "sembung rambat") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SembungRambatResult(
+              accuracy: trimmedAccuracy,
+            ),
+          ),
+        );
+      }
+      if (plantClass.toLowerCase() == "tumpang air") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TumpangAirResult(
+              accuracy: trimmedAccuracy,
+            ),
+          ),
+        );
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Hasil: $plantClass (${accuracy.toStringAsFixed(2)}%)"),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal mengunggah gambar')),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -245,12 +249,16 @@ class _CameraPage extends State<CameraPage> {
                                     ),
                                   ),
                                   Positioned(
-                                      bottom: 30,
+                                    bottom: 30,
+                                    child: GestureDetector(
+                                      onTap: _takePhoto,
                                       child: Container(
                                         child: Image.asset(
                                             "assets/images/icon_snap.png",
                                             height: 50),
-                                      ))
+                                      ),
+                                    ),
+                                  )
                                 ],
                               )
                             : const Center(child: CircularProgressIndicator()),
@@ -311,28 +319,35 @@ class _CameraPage extends State<CameraPage> {
                                     MediaQuery.sizeOf(context).width * 0.1),
                             child: Column(
                               children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: 5,
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(30),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black,
-                                            blurRadius: 1,
-                                            spreadRadius: 0.5,
-                                            offset: Offset(1, 1))
-                                      ]),
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/icon_refresh.png",
-                                        height: 30,
-                                      )
-                                    ],
+                                GestureDetector(
+                                  onTap: () => {
+                                    setState(() {
+                                      _capturedImagePath = null;
+                                    })
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                      bottom: 5,
+                                    ),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(30),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.black,
+                                              blurRadius: 1,
+                                              spreadRadius: 0.5,
+                                              offset: Offset(1, 1))
+                                        ]),
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/icon_refresh.png",
+                                          height: 30,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Text(
@@ -348,28 +363,31 @@ class _CameraPage extends State<CameraPage> {
                                     MediaQuery.sizeOf(context).width * 0.05),
                             child: Column(
                               children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: 5,
-                                  ),
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(30),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.black,
-                                            blurRadius: 1,
-                                            spreadRadius: 0.5,
-                                            offset: Offset(1, 1))
-                                      ]),
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        "assets/images/icon_upload.png",
-                                        height: 30,
-                                      )
-                                    ],
+                                GestureDetector(
+                                  onTap: _pickImage,
+                                  child: Container(
+                                    margin: EdgeInsets.only(
+                                      bottom: 5,
+                                    ),
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(30),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.black,
+                                              blurRadius: 1,
+                                              spreadRadius: 0.5,
+                                              offset: Offset(1, 1))
+                                        ]),
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/icon_upload.png",
+                                          height: 30,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Text(

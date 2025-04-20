@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:leaves_classification_application_nimas/camera_page.dart';
 import 'package:leaves_classification_application_nimas/history_page.dart';
-import 'package:leaves_classification_application_nimas/languages_page.dart';
 import 'package:leaves_classification_application_nimas/languages_page2.dart';
 import 'package:leaves_classification_application_nimas/rating_page.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,12 +14,109 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _HomePage();
 }
 
+Future<Placemark> _getAddressFromLatLng(Position position) async {
+  try {
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+
+    if (placemarks.isNotEmpty) {
+      Placemark place = placemarks[0];
+      print(
+          'Alamat: ${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.country}');
+      return place;
+    }
+  } catch (e) {
+    print('Error saat reverse geocoding: $e');
+  }
+  return Future.error('Location is not found');
+}
+
+Future<Position> _getCurrentLocation() async {
+  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    await Geolocator.openLocationSettings();
+    return Future.error('Location services are disabled.');
+  }
+
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return Future.error('Location permissions are denied');
+    }
+  }
+
+  return await Geolocator.getCurrentPosition(
+    desiredAccuracy: LocationAccuracy.high,
+  );
+}
+
 class _HomePage extends State<HomePage> {
+  List<Map<String, dynamic>> _nearbyPlants = [];
+  Placemark _devAddress = Placemark();
+  final List<Map<String, dynamic>> plantData = [
+    {
+      'name': 'Sembung Rambat',
+      'lat': -8.1706070,
+      'lng': 113.7229250,
+    },
+    {
+      'name': 'Tumpang Air',
+      'lat': -8.1706060,
+      'lng': 113.7229250,
+    },
+  ];
+
+  List<Map<String, dynamic>> getNearbyPlants(
+      Position userPos, double radiusInMeters) {
+    return plantData.where((plant) {
+      double distance = Geolocator.distanceBetween(
+        userPos.latitude,
+        userPos.longitude,
+        plant['lat'],
+        plant['lng'],
+      );
+      return distance <= radiusInMeters;
+    }).toList();
+  }
+
+  void _findNearbyPlants() async {
+    try {
+      Position pos = await _getCurrentLocation();
+      print("POSISI USER: ${pos.latitude}, ${pos.longitude}");
+
+      List<Map<String, dynamic>> nearby = getNearbyPlants(pos, 5000);
+      print("Nearby: $nearby");
+
+      setState(() {
+        _nearbyPlants = nearby;
+      });
+    } catch (e) {
+      print("Error get location: $e");
+    } // 5 km
+  }
+
+  void _findAddress() async {
+    try {
+      Position pos = await _getCurrentLocation();
+      Placemark place = await _getAddressFromLatLng(pos);
+      setState(() {
+        _devAddress = place;
+      });
+    } catch (e) {
+      print("Error get location: $e");
+    }
+  }
+
   final PageController _pageController = PageController(viewportFraction: 0.6);
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _findNearbyPlants();
+    _findAddress();
   }
 
   @override
@@ -44,7 +143,7 @@ class _HomePage extends State<HomePage> {
                       width: 10,
                     ),
                     Text(
-                      "Shah Alam",
+                      '${_devAddress.subLocality}',
                       style: TextStyle(
                           fontFamily: "DMSans",
                           fontSize: 14,
@@ -270,44 +369,51 @@ class _HomePage extends State<HomePage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                   ),
-                  child: PageView.builder(
-                    itemCount: 3,
-                    controller: _pageController,
-                    itemBuilder: (context, index) {
-                      return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 5),
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 43, 83, 190),
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Row(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 10),
+                  child: _nearbyPlants.isEmpty
+                      ? Center(child: CircularProgressIndicator())
+                      : PageView.builder(
+                          itemCount: _nearbyPlants.length,
+                          controller: _pageController,
+                          itemBuilder: (context, index) {
+                            final plant = _nearbyPlants[index];
+                            return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 5),
+                                padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: Color.fromARGB(255, 43, 83, 190),
                                     borderRadius: BorderRadius.circular(15)),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 15),
-                                child: Image.asset(
-                                  "assets/images/icon_leaves.png",
-                                  height: 30,
-                                ),
-                              ),
-                              Container(
-                                child: Text(
-                                  "Plants name",
-                                  style: TextStyle(
-                                      fontFamily: "DMSans",
-                                      fontSize: 18,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )
-                            ],
-                          ));
-                    },
-                  )),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(right: 10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 5, vertical: 15),
+                                      child: Image.asset(
+                                        "assets/images/icon_leaves.png",
+                                        height: 30,
+                                      ),
+                                    ),
+                                    Container(
+                                      child: AutoSizeText(
+                                        plant['name'],
+                                        style: TextStyle(
+                                          fontFamily: "DMSans",
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 1,
+                                        minFontSize: 10,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )
+                                  ],
+                                ));
+                          },
+                        )),
               Expanded(
                 child: Container(
                   color: Colors.white,

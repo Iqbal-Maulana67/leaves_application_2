@@ -1,32 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map_marker_popup/extension_api.dart';
-import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:leaves_classification_application_nimas/models/brotowaliList.dart';
+import 'package:leaves_classification_application_nimas/models/sembungRambatList.dart';
 import 'package:leaves_classification_application_nimas/widgets/indicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-class ResultPage extends StatefulWidget {
-  const ResultPage({super.key});
+class SembungRambatResult extends StatefulWidget {
+  final double accuracy;
+
+  const SembungRambatResult({super.key, required this.accuracy});
 
   @override
-  State<StatefulWidget> createState() => _ResultPage();
+  State<StatefulWidget> createState() => _SembungRambatResult();
 }
 
-class _ResultPage extends State<ResultPage> {
-  final PopupController _popupLayerController = PopupController();
+class _SembungRambatResult extends State<SembungRambatResult> {
   final PageController _pageController = PageController(viewportFraction: 0.75);
-  late final MapController _mapController = MapController();
-
   int _currentPage = 0;
   int _widgetDetail = 0;
-  LatLng? _currentLocation;
-  final List<Marker> markers = [];
-  final List<Map<String, dynamic>> plantMarkers = [];
 
-  final List<String> _markerDescriptions = ["Ini Jakarta", "Ini Lokasi Kedua"];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _pageController.addListener(() {
+      final page = _pageController.page?.round() ?? 0;
+      if (_currentPage != page) {
+        setState(() {
+          _currentPage = page;
+        });
+      }
+    });
+  }
 
   BoxDecoration _getDecoration(int index) {
     if (_currentPage == index) {
@@ -41,104 +48,6 @@ class _ResultPage extends State<ResultPage> {
           color: Color.fromARGB(255, 59, 99, 203),
           borderRadius: BorderRadius.circular(20.0));
     }
-  }
-
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      await Geolocator.openLocationSettings();
-      return Future.error('Location services are disabled.');
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-  }
-
-  void _getLocation() async {
-    try {
-      Position pos = await _getCurrentLocation();
-
-      setState(() {
-        _currentLocation = LatLng(pos.latitude, pos.longitude);
-        print('Lokasi ${_currentLocation}');
-
-        plantMarkers.add({
-          'marker': Marker(
-            point: LatLng(pos.latitude, pos.longitude),
-            width: 20,
-            height: 20,
-            child: Icon(Icons.location_on, size: 20, color: Colors.red),
-          ),
-          'name': "Your Position"
-        });
-      });
-
-      _mapController.move(LatLng(pos.latitude, pos.longitude), 15);
-    } catch (e) {
-      print("Gagal mendapatkan lokasi: $e");
-    }
-  }
-
-  void _loadPlants() async {
-    try {
-      setState(() {
-        plantMarkers.addAll([
-          {
-            'marker': Marker(
-                point: LatLng(-8.1706070, 113.7229250),
-                width: 20,
-                height: 20,
-                child: Icon(Icons.location_on, size: 20, color: Colors.green),
-                key: Key('marker--8.1706070-113.7229250')),
-            'name': 'Tumpang Air'
-          },
-          {
-            'marker': Marker(
-                point: LatLng(-8.1706070, 113.7259350),
-                width: 20,
-                height: 20,
-                child: Icon(Icons.location_on, size: 20, color: Colors.green),
-                key: Key('marker--8.1706070-113.7259350')),
-            'name': 'Sembung Rambat'
-          },
-          {
-            'marker': Marker(
-                point: LatLng(-8.1706070, 113.7299150),
-                width: 20,
-                height: 20,
-                child: Icon(Icons.location_on, size: 20, color: Colors.green),
-                key: Key('marker--8.1706070-113.7299150')),
-            'name': 'Rumput Minjangan'
-          }
-        ]);
-      });
-    } catch (e) {}
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _getLocation();
-
-    _pageController.addListener(() {
-      final page = _pageController.page?.round() ?? 0;
-      if (_currentPage != page) {
-        setState(() {
-          _currentPage = page;
-        });
-      }
-    });
-    _loadPlants();
   }
 
   @override
@@ -201,7 +110,7 @@ class _ResultPage extends State<ResultPage> {
                     children: [
                       Container(
                         child: Text(
-                          "Plant Name",
+                          AppLocalizations.of(context)!.sembung_rambat,
                           style: TextStyle(
                               fontFamily: "DMSans",
                               fontSize: 20,
@@ -210,7 +119,7 @@ class _ResultPage extends State<ResultPage> {
                       ),
                       Container(
                         child: Text(
-                          "Scientific Name",
+                          "Mikania micrantha",
                           style: TextStyle(
                               fontFamily: "DMSans",
                               fontSize: 18,
@@ -631,10 +540,10 @@ class _ResultPage extends State<ResultPage> {
               MediaQuery.sizeOf(context).width * 0.7, // Tinggi yang diinginkan
           decoration: BoxDecoration(color: Colors.white),
           child: PageView.builder(
-            itemCount: BrotowaliList.length,
+            itemCount: SembungRambatList.length,
             controller: _pageController,
             itemBuilder: (context, index) {
-              final plant = BrotowaliList[index];
+              final plant = SembungRambatList[index];
               var _scale = index == _currentPage ? 1.0 : 0.9;
               return TweenAnimationBuilder(
                   tween: Tween(begin: _scale, end: _scale),
@@ -717,7 +626,7 @@ class _ResultPage extends State<ResultPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ...List.generate(
-                  BrotowaliList.length,
+                  SembungRambatList.length,
                   (index) =>
                       Indicator(isActive: _currentPage == index ? true : false))
             ],
@@ -756,39 +665,15 @@ class _ResultPage extends State<ResultPage> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: FlutterMap(
-              mapController: _mapController,
               options: MapOptions(
-                  initialCenter:
-                      _currentLocation ?? LatLng(-8.1706070, 113.7229250),
-                  initialZoom: 10.0,
-                  minZoom: 3,
-                  maxZoom: 20,
-                  onTap: (_, __) => _popupLayerController.hideAllPopups()),
+                initialCenter: LatLng(-6.1751, 106.8650), // Koordinat Jakarta
+                initialZoom: 10.0,
+                minZoom: 3, // Tambahkan batasan minimal
+                maxZoom: 18,
+              ),
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                ),
-                PopupMarkerLayer(
-                  options: PopupMarkerLayerOptions(
-                    markers:
-                        plantMarkers.map((e) => e['marker'] as Marker).toList(),
-                    popupController: _popupLayerController,
-                    markerTapBehavior:
-                        MarkerTapBehavior.togglePopupAndHideRest(),
-                    popupDisplayOptions: PopupDisplayOptions(
-                        builder: (BuildContext context, Marker marker) {
-                      final match = plantMarkers.firstWhere(
-                        (e) => e['marker'].key == marker.key,
-                        orElse: () => {'name': 'None'},
-                      );
-                      return Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(match['name']),
-                        ),
-                      );
-                    }),
-                  ),
                 ),
               ],
             ),
