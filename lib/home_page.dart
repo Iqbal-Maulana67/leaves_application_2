@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:leaves_classification_application_nimas/camera_page.dart';
+import 'package:leaves_classification_application_nimas/data/plant_list.dart';
 import 'package:leaves_classification_application_nimas/history_page.dart';
 import 'package:leaves_classification_application_nimas/languages_page2.dart';
 import 'package:leaves_classification_application_nimas/rating_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
@@ -54,29 +56,16 @@ Future<Position> _getCurrentLocation() async {
 }
 
 class _HomePage extends State<HomePage> {
-  List<Map<String, dynamic>> _nearbyPlants = [];
+  List<PlantList> _nearbyPlants = [];
   Placemark _devAddress = Placemark();
-  final List<Map<String, dynamic>> plantData = [
-    {
-      'name': 'Sembung Rambat',
-      'lat': -8.1706070,
-      'lng': 113.7229250,
-    },
-    {
-      'name': 'Tumpang Air',
-      'lat': -8.1706060,
-      'lng': 113.7229250,
-    },
-  ];
 
-  List<Map<String, dynamic>> getNearbyPlants(
-      Position userPos, double radiusInMeters) {
+  List<PlantList> getNearbyPlants(Position userPos, double radiusInMeters) {
     return plantData.where((plant) {
       double distance = Geolocator.distanceBetween(
         userPos.latitude,
         userPos.longitude,
-        plant['lat'],
-        plant['lng'],
+        plant.lat,
+        plant.lng,
       );
       return distance <= radiusInMeters;
     }).toList();
@@ -87,7 +76,7 @@ class _HomePage extends State<HomePage> {
       Position pos = await _getCurrentLocation();
       print("POSISI USER: ${pos.latitude}, ${pos.longitude}");
 
-      List<Map<String, dynamic>> nearby = getNearbyPlants(pos, 5000);
+      List<PlantList> nearby = getNearbyPlants(pos, 5000);
       print("Nearby: $nearby");
 
       setState(() {
@@ -143,7 +132,9 @@ class _HomePage extends State<HomePage> {
                       width: 10,
                     ),
                     Text(
-                      '${_devAddress.subLocality}',
+                      _devAddress.locality == null
+                          ? 'Loading...'
+                          : '${_devAddress.locality}, ${_devAddress.administrativeArea}',
                       style: TextStyle(
                           fontFamily: "DMSans",
                           fontSize: 14,
@@ -157,7 +148,7 @@ class _HomePage extends State<HomePage> {
                 margin: EdgeInsets.only(top: 30),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Hi there!\nWhat plant are you curious for today?",
+                  "${AppLocalizations.of(context)!.hi_there}\n${AppLocalizations.of(context)!.what_plant}",
                   style: TextStyle(
                       fontFamily: "DMSans",
                       fontSize: 25,
@@ -212,7 +203,7 @@ class _HomePage extends State<HomePage> {
                                     height: 100,
                                   ),
                                   Text(
-                                    "History",
+                                    AppLocalizations.of(context)!.history,
                                     style: TextStyle(
                                       fontFamily: "DMSans",
                                       fontWeight: FontWeight.bold,
@@ -250,7 +241,7 @@ class _HomePage extends State<HomePage> {
                                     height: 80,
                                   ),
                                   Text(
-                                    "Feedback",
+                                    AppLocalizations.of(context)!.feedback,
                                     style: TextStyle(
                                       fontFamily: "DMSans",
                                       fontWeight: FontWeight.bold,
@@ -295,7 +286,7 @@ class _HomePage extends State<HomePage> {
                                   height: 60,
                                 ),
                                 Text(
-                                  "Language",
+                                  AppLocalizations.of(context)!.language2,
                                   style: TextStyle(
                                     fontFamily: "DMSans",
                                     fontWeight: FontWeight.bold,
@@ -333,7 +324,7 @@ class _HomePage extends State<HomePage> {
                                   height: 100,
                                 ),
                                 Text(
-                                  "Identify",
+                                  AppLocalizations.of(context)!.identify,
                                   style: TextStyle(
                                     fontFamily: "DMSans",
                                     fontWeight: FontWeight.bold,
@@ -355,7 +346,7 @@ class _HomePage extends State<HomePage> {
                     top: 10, left: MediaQuery.sizeOf(context).width * 0.05),
                 decoration: BoxDecoration(color: Colors.white),
                 child: Text(
-                  "Plants around you right now",
+                  AppLocalizations.of(context)!.plant_around,
                   style: TextStyle(
                       fontFamily: "DMSans",
                       fontSize: 20,
@@ -399,7 +390,8 @@ class _HomePage extends State<HomePage> {
                                     ),
                                     Container(
                                       child: AutoSizeText(
-                                        plant['name'],
+                                        plant.getLocalizedPlantName(
+                                            context, plant.nameKey),
                                         style: TextStyle(
                                           fontFamily: "DMSans",
                                           color: Colors.white,

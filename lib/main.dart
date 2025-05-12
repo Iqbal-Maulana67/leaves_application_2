@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:leaves_classification_application_nimas/result_page.dart';
+import 'package:leaves_classification_application_nimas/provider/local_provider.dart';
 import 'package:leaves_classification_application_nimas/welcome_page.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterLocalization.instance.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => LocaleProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,9 +24,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
     return MaterialApp(
-      title: 'Flutter Demo',
-      locale: Locale('en'),
+      title: 'Wild Leaf Classification App',
+      locale: localeProvider.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: ThemeData(
@@ -28,7 +35,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const WelcomePage(),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }

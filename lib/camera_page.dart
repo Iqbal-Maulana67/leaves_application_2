@@ -1,17 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:leaves_classification_application_nimas/result_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:leaves_classification_application_nimas/db/history_db.dart';
 import 'package:leaves_classification_application_nimas/results/brotowali_result.dart';
 import 'package:leaves_classification_application_nimas/results/pegagan_result.dart';
 import 'package:leaves_classification_application_nimas/results/rambusa_result.dart';
 import 'package:leaves_classification_application_nimas/results/rumput_minjangan_result.dart';
 import 'package:leaves_classification_application_nimas/results/sembung_rambat_result.dart';
 import 'package:leaves_classification_application_nimas/results/tumpang_air_result.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -25,12 +29,14 @@ class _CameraPage extends State<CameraPage> {
   List<CameraDescription>? cameras;
   bool _isCameraInitialized = false;
   String? _capturedImagePath;
+  Placemark _devAddress = Placemark();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _initializeCamera();
+    _findAddress();
   }
 
   Future<void> _initializeCamera() async {
@@ -66,22 +72,22 @@ class _CameraPage extends State<CameraPage> {
         _capturedImagePath = image.path;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Choosed Image: ${image.path}')),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Choosed Image: ${image.path}')),
+      // );
     }
   }
 
   Future<void> _uploadImage() async {
     if (_capturedImagePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Pilih atau ambil gambar terlebih dahulu')),
+        const SnackBar(content: Text('Choose or take photo before identify.')),
       );
       return;
     }
 
-    var uri = Uri.parse("http://192.168.1.5:8000/api/predict-id/");
+    var uri =
+        Uri.parse("https://fa6f-66-96-225-189.ngrok-free.app/api/predict-id/");
     var request = http.MultipartRequest('POST', uri)
       ..files
           .add(await http.MultipartFile.fromPath('gmbr', _capturedImagePath!));
@@ -97,61 +103,91 @@ class _CameraPage extends State<CameraPage> {
       double trimmedAccuracy = double.parse(accuracy.toStringAsFixed(1));
 
       if (plantClass.toLowerCase() == "pegagan") {
+        HistoryDatabase.insertHistory(
+            "plantName_pegagan",
+            '${_devAddress.locality}, ${_devAddress.administrativeArea}',
+            trimmedAccuracy.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PegaganResult(
               accuracy: trimmedAccuracy,
+              imgPath: _capturedImagePath!,
             ),
           ),
         );
       }
       if (plantClass.toLowerCase() == "brotowali") {
+        HistoryDatabase.insertHistory(
+            "plantName_brotowali",
+            '${_devAddress.locality}, ${_devAddress.administrativeArea}',
+            trimmedAccuracy.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => BrotowaliResult(
               accuracy: trimmedAccuracy,
+              imgPath: _capturedImagePath!,
             ),
           ),
         );
       }
       if (plantClass.toLowerCase() == "rambusa") {
+        HistoryDatabase.insertHistory(
+            "plantName_rambusa",
+            '${_devAddress.locality}, ${_devAddress.administrativeArea}',
+            trimmedAccuracy.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => RambusaResult(
               accuracy: trimmedAccuracy,
+              imgPath: _capturedImagePath!,
             ),
           ),
         );
       }
       if (plantClass.toLowerCase() == "rumput minjangan") {
+        HistoryDatabase.insertHistory(
+            "plantName_rumputMinjangan",
+            '${_devAddress.locality}, ${_devAddress.administrativeArea}',
+            trimmedAccuracy.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => RumputMinjanganResult(
               accuracy: trimmedAccuracy,
+              imgPath: _capturedImagePath!,
             ),
           ),
         );
       }
       if (plantClass.toLowerCase() == "sembung rambat") {
+        HistoryDatabase.insertHistory(
+            "plantName_sembungRambat",
+            '${_devAddress.locality}, ${_devAddress.administrativeArea}',
+            trimmedAccuracy.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SembungRambatResult(
               accuracy: trimmedAccuracy,
+              imgPath: _capturedImagePath!,
             ),
           ),
         );
       }
       if (plantClass.toLowerCase() == "tumpang air") {
+        HistoryDatabase.insertHistory(
+            "plantName_tumpangAir",
+            '${_devAddress.locality}, ${_devAddress.administrativeArea}',
+            trimmedAccuracy.toString());
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => TumpangAirResult(
               accuracy: trimmedAccuracy,
+              imgPath: _capturedImagePath!,
             ),
           ),
         );
@@ -166,6 +202,57 @@ class _CameraPage extends State<CameraPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Gagal mengunggah gambar')),
       );
+    }
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location services are disabled.');
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+  }
+
+  Future<Placemark> _getAddressFromLatLng(Position position) async {
+    try {
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        print(
+            'Alamat: ${place.street}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.country}');
+        return place;
+      }
+    } catch (e) {
+      print('Error saat reverse geocoding: $e');
+    }
+    return Future.error('Location is not found');
+  }
+
+  void _findAddress() async {
+    try {
+      Position pos = await _getCurrentLocation();
+      Placemark place = await _getAddressFromLatLng(pos);
+      setState(() {
+        _devAddress = place;
+      });
+    } catch (e) {
+      print("Error get location: $e");
     }
   }
 
@@ -185,23 +272,26 @@ class _CameraPage extends State<CameraPage> {
         height: MediaQuery.sizeOf(context).height,
         child: Column(
           children: [
-            Container(
-              margin: EdgeInsets.only(top: 20, left: 20),
-              alignment: Alignment.centerLeft,
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
               child: Container(
-                width: 40.0,
-                height: 40.0,
-                decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.grey,
-                          offset: Offset(1, 1),
-                          spreadRadius: 0.5,
-                          blurRadius: 1)
-                    ],
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(50)),
-                child: Icon(Icons.arrow_back),
+                margin: EdgeInsets.only(top: 20, left: 20),
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(1, 1),
+                            spreadRadius: 0.5,
+                            blurRadius: 1)
+                      ],
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(50)),
+                  child: Icon(Icons.arrow_back),
+                ),
               ),
             ),
             Container(
@@ -275,11 +365,27 @@ class _CameraPage extends State<CameraPage> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const ResultPage()));
+                                    if (_capturedImagePath == null ||
+                                        _capturedImagePath!.isEmpty) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Please insert the image using camera or file')),
+                                      );
+                                    } else {
+                                      _uploadImage();
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) =>
+                                      //         TumpangAirResult(
+                                      //       accuracy: 42.7,
+                                      //       imgPath: _capturedImagePath!,
+                                      //     ),
+                                      //   ),
+                                      // );
+                                    }
                                   },
                                   child: Container(
                                     margin: EdgeInsets.only(
@@ -307,7 +413,7 @@ class _CameraPage extends State<CameraPage> {
                                   ),
                                 ),
                                 Text(
-                                  "Predict",
+                                  AppLocalizations.of(context)!.predict,
                                   style: TextStyle(fontFamily: "DMSans"),
                                 )
                               ],
@@ -351,7 +457,8 @@ class _CameraPage extends State<CameraPage> {
                                   ),
                                 ),
                                 Text(
-                                  "Refresh",
+                                  AppLocalizations.of(context)!.refresh,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(fontFamily: "DMSans"),
                                 )
                               ],
@@ -390,9 +497,18 @@ class _CameraPage extends State<CameraPage> {
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  "Upload",
-                                  style: TextStyle(fontFamily: "DMSans"),
+                                Container(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.upload,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontFamily: "DMSans",
+                                      fontSize: 14,
+                                    ),
+                                    softWrap: true, // Aktifkan wrap otomatis
+                                    overflow: TextOverflow
+                                        .visible, // Pastikan teks tetap terlihat
+                                  ),
                                 )
                               ],
                             ),

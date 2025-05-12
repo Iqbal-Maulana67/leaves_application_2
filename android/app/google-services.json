@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "715163049971",
+    "project_id": "leaf-classification-9f3a2",
+    "storage_bucket": "leaf-classification-9f3a2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715163049971:android:e043aef9b0ca4b95e03c86",
+        "android_client_info": {
+          "package_name": "com.imfiekri.leaf_classification"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClE9HrmRAYjRgaJcSz_7xNIMZ41UWjhSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

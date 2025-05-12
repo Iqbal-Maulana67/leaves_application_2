@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:leaves_classification_application_nimas/home_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:leaves_classification_application_nimas/provider/local_provider.dart';
+import 'package:provider/provider.dart';
 
 class LanguagesPage extends StatefulWidget {
   const LanguagesPage({super.key});
@@ -44,7 +47,7 @@ class _LanguagesPage extends State<LanguagesPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Choose Your Preffered Language",
+                      AppLocalizations.of(context)!.choose_language,
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
@@ -52,7 +55,7 @@ class _LanguagesPage extends State<LanguagesPage> {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Please select your language",
+                      AppLocalizations.of(context)!.select_language,
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.white,
@@ -77,10 +80,19 @@ class _LanguagesPage extends State<LanguagesPage> {
                     _languageOption("assets/images/icon_en.png", "English"),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HomePage()));
+                        if (_selectedLanguage == null ||
+                            _selectedLanguage!.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Please choose one of the language.')),
+                          );
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomePage()));
+                        }
                       },
                       child: Container(
                         margin: EdgeInsets.only(
@@ -99,7 +111,7 @@ class _LanguagesPage extends State<LanguagesPage> {
                               end: Alignment.centerRight,
                             )),
                         child: Text(
-                          "Choose",
+                          AppLocalizations.of(context)!.choose,
                           style: TextStyle(
                             fontFamily: "DMSans",
                             color: Colors.white,
@@ -127,8 +139,18 @@ class _LanguagesPage extends State<LanguagesPage> {
   Widget _languageOption(String assetPath, String language) {
     return GestureDetector(
       onTap: () {
+        final localeProvider =
+            Provider.of<LocaleProvider>(context, listen: false);
         setState(() {
           _selectedLanguage = language;
+
+          if (language == "Indonesia") {
+            localeProvider.setLocale(const Locale('id'));
+          } else if (language == "English") {
+            localeProvider.setLocale(const Locale('en'));
+          } else if (language == "Malaysia") {
+            localeProvider.setLocale(const Locale('my'));
+          }
         });
       },
       child: Container(

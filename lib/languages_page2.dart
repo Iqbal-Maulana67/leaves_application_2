@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:leaves_classification_application_nimas/provider/local_provider.dart';
+import 'package:provider/provider.dart';
 
 class LanguagesPage2 extends StatefulWidget {
   const LanguagesPage2({super.key});
@@ -17,6 +20,8 @@ class _LanguagesPage2 extends State<LanguagesPage2> {
 
   @override
   Widget build(BuildContext context) {
+    _selectedLanguage = AppLocalizations.of(context)!.language;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -25,23 +30,26 @@ class _LanguagesPage2 extends State<LanguagesPage2> {
           height: MediaQuery.sizeOf(context).height,
           child: Column(
             children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(top: 20, left: 20),
-                alignment: Alignment.centerLeft,
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
                 child: Container(
-                  width: 40.0,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(1, 1),
-                            spreadRadius: 0.5,
-                            blurRadius: 1)
-                      ],
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(50)),
-                  child: Icon(Icons.arrow_back),
+                  margin: EdgeInsets.only(top: 20, left: 20),
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    width: 40.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(1, 1),
+                              spreadRadius: 0.5,
+                              blurRadius: 1)
+                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: Icon(Icons.arrow_back),
+                  ),
                 ),
               ),
               Container(
@@ -62,7 +70,7 @@ class _LanguagesPage2 extends State<LanguagesPage2> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Choose Your Preffered Language",
+                      AppLocalizations.of(context)!.choose_language,
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
@@ -70,7 +78,7 @@ class _LanguagesPage2 extends State<LanguagesPage2> {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Please select your language",
+                      AppLocalizations.of(context)!.select_language,
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.white,
@@ -114,7 +122,7 @@ class _LanguagesPage2 extends State<LanguagesPage2> {
                               end: Alignment.centerRight,
                             )),
                         child: Text(
-                          "Choose",
+                          AppLocalizations.of(context)!.choose,
                           style: TextStyle(
                             fontFamily: "DMSans",
                             color: Colors.white,
@@ -142,9 +150,19 @@ class _LanguagesPage2 extends State<LanguagesPage2> {
   Widget _languageOption(String assetPath, String language) {
     return GestureDetector(
       onTap: () {
+        final localeProvider =
+            Provider.of<LocaleProvider>(context, listen: false);
         setState(() {
           _selectedLanguage = language;
         });
+
+        if (language == "Indonesia") {
+          localeProvider.setLocale(const Locale('id'));
+        } else if (language == "English") {
+          localeProvider.setLocale(const Locale('en'));
+        } else if (language == "Malaysia") {
+          localeProvider.setLocale(const Locale('my'));
+        }
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5.0),

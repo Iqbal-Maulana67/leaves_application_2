@@ -1,4 +1,6 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class RatingPage extends StatefulWidget {
   const RatingPage({super.key});
@@ -9,10 +11,46 @@ class RatingPage extends StatefulWidget {
 
 class _RatingPage extends State<RatingPage> {
   int _selectedRate = 0;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController feedbackController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void sendRating(BuildContext context) async {
+    if (emailController.text.isEmpty ||
+        feedbackController.text.isEmpty ||
+        _selectedRate == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Please select your rate 1-5, input your email and feedback')),
+      );
+    } else {
+      var uri =
+          Uri.parse("https://fa6f-66-96-225-189.ngrok-free.app/api/send-rate/");
+      var request = http.MultipartRequest('POST', uri)
+        ..fields.addAll({
+          'rates': _selectedRate.toString(),
+          'email': emailController.text,
+          'feedback': feedbackController.text,
+        });
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Your feedback has been sent.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error please try again next time')),
+        );
+      }
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -67,7 +105,7 @@ class _RatingPage extends State<RatingPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Give Us Your Feedback",
+                      AppLocalizations.of(context)!.feedback_title,
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.white,
@@ -75,7 +113,7 @@ class _RatingPage extends State<RatingPage> {
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "We’d love to hear your thoughts! What do you think about this app?",
+                      AppLocalizations.of(context)!.feedback_desc,
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.white,
@@ -119,6 +157,7 @@ class _RatingPage extends State<RatingPage> {
                       padding: EdgeInsets.symmetric(
                           horizontal: MediaQuery.sizeOf(context).width * 0.1),
                       child: TextField(
+                        controller: emailController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -144,6 +183,7 @@ class _RatingPage extends State<RatingPage> {
                       padding: EdgeInsets.symmetric(
                           horizontal: MediaQuery.sizeOf(context).width * 0.1),
                       child: TextField(
+                        controller: feedbackController,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -153,7 +193,7 @@ class _RatingPage extends State<RatingPage> {
                               .never, // Supaya label tidak naik ke atas garis
                           alignLabelWithHint:
                               true, // Membuat label tetap di atas
-                          hintText: "Feedback",
+                          hintText: AppLocalizations.of(context)!.feedback,
                           contentPadding: EdgeInsets.fromLTRB(10, 10, 10,
                               10), // Mengatur padding agar teks di kiri atas
                           focusedBorder: OutlineInputBorder(
@@ -171,27 +211,32 @@ class _RatingPage extends State<RatingPage> {
                           top: 20),
                       child: Row(
                         children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 10),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color.fromARGB(255, 79, 117, 217),
-                                    Color.fromARGB(255, 38, 88, 222)
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                )),
-                            child: Text(
-                              "Submit",
-                              style: TextStyle(
-                                fontFamily: "DMSans",
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                          GestureDetector(
+                            onTap: () {
+                              sendRating(context);
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(right: 10),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color.fromARGB(255, 79, 117, 217),
+                                      Color.fromARGB(255, 38, 88, 222)
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  )),
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                  fontFamily: "DMSans",
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -214,7 +259,7 @@ class _RatingPage extends State<RatingPage> {
                                     end: Alignment.centerRight,
                                   )),
                               child: Text(
-                                "Cancel",
+                                AppLocalizations.of(context)!.cancel,
                                 style: TextStyle(
                                   fontFamily: "DMSans",
                                   color: Colors.white,

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map_marker_popup/extension_api.dart';
 import 'package:flutter_map_marker_popup/flutter_map_marker_popup.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:leaves_classification_application_nimas/data/plant_list.dart';
 import 'package:leaves_classification_application_nimas/models/brotowaliList.dart';
 import 'package:leaves_classification_application_nimas/widgets/indicator.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 
@@ -25,8 +27,7 @@ class _ResultPage extends State<ResultPage> {
   LatLng? _currentLocation;
   final List<Marker> markers = [];
   final List<Map<String, dynamic>> plantMarkers = [];
-
-  final List<String> _markerDescriptions = ["Ini Jakarta", "Ini Lokasi Kedua"];
+  final List<Map<String, dynamic>> plants = [];
 
   BoxDecoration _getDecoration(int index) {
     if (_currentPage == index) {
@@ -41,6 +42,20 @@ class _ResultPage extends State<ResultPage> {
           color: Color.fromARGB(255, 59, 99, 203),
           borderRadius: BorderRadius.circular(20.0));
     }
+  }
+
+  String getLocalizedPlantName(BuildContext context, String key) {
+    final localizations = AppLocalizations.of(context)!;
+    final Map<String, String> allKeys = {
+      'plantName_brotowali': localizations.brotowali,
+      'plantName_pegagan': localizations.pegagan,
+      'plantName_rambusa': localizations.rambusa,
+      'plantName_rumputMinjangan': localizations.rumput_minjangan,
+      'plantName_sembungRambat': localizations.sembung_rambat,
+      'plantName_tumpangAir': localizations.tumpang_air,
+      // Tambah key lainnya di sini
+    };
+    return allKeys[key] ?? key; // fallback jika key tidak ditemukan
   }
 
   Future<Position> _getCurrentLocation() async {
@@ -90,36 +105,49 @@ class _ResultPage extends State<ResultPage> {
 
   void _loadPlants() async {
     try {
+      for (var plant in plantData) {
+        plants.add({
+          'marker': Marker(
+              point: LatLng(plant.lat, plant.lng),
+              width: 20,
+              height: 20,
+              child: Icon(Icons.location_on, size: 20, color: Colors.green),
+              key: Key('marker-${plant.lat}-${plant.lng}')),
+          'name': plant.nameKey
+        });
+      }
       setState(() {
-        plantMarkers.addAll([
-          {
-            'marker': Marker(
-                point: LatLng(-8.1706070, 113.7229250),
-                width: 20,
-                height: 20,
-                child: Icon(Icons.location_on, size: 20, color: Colors.green),
-                key: Key('marker--8.1706070-113.7229250')),
-            'name': 'Tumpang Air'
-          },
-          {
-            'marker': Marker(
-                point: LatLng(-8.1706070, 113.7259350),
-                width: 20,
-                height: 20,
-                child: Icon(Icons.location_on, size: 20, color: Colors.green),
-                key: Key('marker--8.1706070-113.7259350')),
-            'name': 'Sembung Rambat'
-          },
-          {
-            'marker': Marker(
-                point: LatLng(-8.1706070, 113.7299150),
-                width: 20,
-                height: 20,
-                child: Icon(Icons.location_on, size: 20, color: Colors.green),
-                key: Key('marker--8.1706070-113.7299150')),
-            'name': 'Rumput Minjangan'
-          }
-        ]);
+        plantMarkers.addAll(plants);
+
+        // plantMarkers.addAll([
+        //   {
+        //     'marker': Marker(
+        //         point: LatLng(-8.1706070, 113.7229250),
+        //         width: 20,
+        //         height: 20,
+        //         child: Icon(Icons.location_on, size: 20, color: Colors.green),
+        //         key: Key('marker--8.1706070-113.7229250')),
+        //     'name': 'Tumpang Air'
+        //   },
+        //   {
+        //     'marker': Marker(
+        //         point: LatLng(-8.1706070, 113.7259350),
+        //         width: 20,
+        //         height: 20,
+        //         child: Icon(Icons.location_on, size: 20, color: Colors.green),
+        //         key: Key('marker--8.1706070-113.7259350')),
+        //     'name': 'Sembung Rambat'
+        //   },
+        //   {
+        //     'marker': Marker(
+        //         point: LatLng(-8.1706070, 113.7299150),
+        //         width: 20,
+        //         height: 20,
+        //         child: Icon(Icons.location_on, size: 20, color: Colors.green),
+        //         key: Key('marker--8.1706070-113.7299150')),
+        //     'name': 'Rumput Minjangan'
+        //   }
+        // ]);
       });
     } catch (e) {}
   }
@@ -784,7 +812,8 @@ class _ResultPage extends State<ResultPage> {
                       return Card(
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(match['name']),
+                          child: Text(
+                              getLocalizedPlantName(context, match["name"])),
                         ),
                       );
                     }),
