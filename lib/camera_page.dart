@@ -86,8 +86,7 @@ class _CameraPage extends State<CameraPage> {
       return;
     }
 
-    var uri =
-        Uri.parse("https://fa6f-66-96-225-189.ngrok-free.app/api/predict-id/");
+    var uri = Uri.parse("http://167.99.66.37:8000//api/predict-id/");
     var request = http.MultipartRequest('POST', uri)
       ..files
           .add(await http.MultipartFile.fromPath('gmbr', _capturedImagePath!));

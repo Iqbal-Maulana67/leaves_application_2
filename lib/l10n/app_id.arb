@@ -49,15 +49,15 @@
     "pegagan_herbal_drink_1" : "Cuci bersih daun pegagan di bawah air mengalir.",
     "pegagan_herbal_drink_2" : "Rebus 500 ml air hingga mendidih.",
     "pegagan_herbal_drink_3" : "Masukkan daun pegagan dan jahe ke dalam air mendidih.",
-    "pegagan_herbal_drink_4" : "Rebus selama 10–15 menit hingga air berubah warna.",
+    "pegagan_herbal_drink_4" : "Rebus selama 10-15 menit hingga air berubah warna.",
     "pegagan_herbal_drink_5" : "Saring airnya dan tambahkan gula aren atau madu.",
     "pegagan_herbal_drink_6" : "Minum dalam keadaan hangat atau dingin.",
 
     "pegagan_tea_drink_title": "Persiapan Teh",
     "pegagan_tea_drink_desc": "Meningkatkan daya ingat, antioksidan, memberi efek menenangkan, dan meningkatkan fungsi mental",
-    "pegagan_tea_drink_1": "Jika menggunakan daun segar, cuci bersih lalu jemur hingga kering (3–5 hari)",
+    "pegagan_tea_drink_1": "Jika menggunakan daun segar, cuci bersih lalu jemur hingga kering (3-5 hari)",
     "pegagan_tea_drink_2": "Seduh 1 sendok teh daun pegagan kering dengan 300 ml air panas",
-    "pegagan_tea_drink_3": "Diamkan selama 5–10 menit hingga warnanya berubah",
+    "pegagan_tea_drink_3": "Diamkan selama 5-10 menit hingga warnanya berubah",
     "pegagan_tea_drink_4": "Saring dan minum hangat. Bisa tambahkan madu jika suka",
 
     "pegagan_wound_title": "Mengolah Obat Luka",
@@ -65,7 +65,7 @@
     "pegagan_wound_1": "Cuci daun pegagan hingga bersih",
     "pegagan_wound_2": "Tumbuk hingga halus atau blender dengan sedikit air",
     "pegagan_wound_3": "Oleskan langsung pada luka atau borok",
-    "pegagan_wound_4": "Biarkan selama 15–20 menit, lalu bilas dengan air bersih",
+    "pegagan_wound_4": "Biarkan selama 15-20 menit, lalu bilas dengan air bersih",
 
     "brotowali" : "Brotowali",
     "brotowali_description" : "Bratawali, akar ali-ali atau brotowali (Tinospora cordifolia) adalah tanaman obat tradisional Indonesia yang biasa ditanam di pekarangan atau tumbuh liar di hutan. Rebusan batangnya yang terasa sangat pahit biasa dijadikan obat reumatik, mengurangi gula darah, menurunkan panas(meningkatkan imunitas), dan membantu mengurangi gejala kencing manis. Di Indonesia, selain dikenal dengan nama bratawali, tanaman ini juga dikenal dengan nama daerah andawali, antawali, putrawali atau daun gadel. Klasifikasi dari tanaman ini termasuk kedalam famili tanaman Menispermaceae.Tanaman ini kaya kandungan kimia antara lain alkaloid (berberina dan kolumbina yang terkandung di akar dan batang, damar lunak, pati, glikosida pikroretosid, zat pahit pikroretin, hars, berberin, palmatin, kolumbin (akar), kokulin (pikrotoksin).",
@@ -132,8 +132,8 @@
     "rumput_minjangan_tea_drink_desc": "Membantu mengatasi batuk, anti-inflamasi, dan mengatur tekanan darah",
     "rumput_minjangan_tea_drink_1": "Ambil 1 genggam daun Rumput Minjangan kering",
     "rumput_minjangan_tea_drink_2": "300 ml air panas",
-    "rumput_minjangan_tea_drink_3": "Keringkan daun selama 3–5 hari",
-    "rumput_minjangan_tea_drink_4": "Seduh dengan air panas dan diamkan 5–10 menit",
+    "rumput_minjangan_tea_drink_3": "Keringkan daun selama 3-5 hari",
+    "rumput_minjangan_tea_drink_4": "Seduh dengan air panas dan diamkan 5-10 menit",
     "rumput_minjangan_tea_drink_5": "Minum selagi hangat",
 
     "rumput_minjangan_wound_title": "Mengubah Obat Luka",
@@ -170,9 +170,9 @@
     "sembung_rambat_tea_drink_desc": "Mengatasi maag, nyeri haid, dan membantu mengatur siklus haid",
     "sembung_rambat_tea_drink_1": "Ambil 1 genggam daun sembung rambat kering",
     "sembung_rambat_tea_drink_2": "300 ml air panas",
-    "sembung_rambat_tea_drink_3": "Cuci daun, keringkan selama 3–5 hari di tempat teduh",
+    "sembung_rambat_tea_drink_3": "Cuci daun, keringkan selama 3-5 hari di tempat teduh",
     "sembung_rambat_tea_drink_4": "Seduh 1 satu sendok teh daun kering dengan air panas",
-    "sembung_rambat_tea_drink_5": "Diamkan selama 5–10 menit, lalu saring",
+    "sembung_rambat_tea_drink_5": "Diamkan selama 5-10 menit, lalu saring",
     "sembung_rambat_tea_drink_6": "Minum selagi hangat",
 
     "sembung_rambat_wound_title": "Mengubah Obat Luka",
@@ -201,7 +201,7 @@
     "rambusa_herbal_drink_1": "Ambil 1 genggam daun rambusa segar",
     "rambusa_herbal_drink_2": "500 ml air dan 1 sendok teh madu (opsional)",
     "rambusa_herbal_drink_3": "Cuci bersih daun rambusa",
-    "rambusa_herbal_drink_4": "Rebus dalam air mendidih selama 10–15 menit",
+    "rambusa_herbal_drink_4": "Rebus dalam air mendidih selama 10-15 menit",
     "rambusa_herbal_drink_5": "Saring airnya dan biarkan hangat",
     "rambusa_herbal_drink_6": "Tambahkan madu jika diinginkan",
     "rambusa_herbal_drink_7": "Minum sebelum tidur untuk membantu relaksasi",
@@ -210,16 +210,16 @@
     "rambusa_tea_drink_desc": "Membantu mengatasi tekanan darah tinggi, peradangan, dan nyeri sendi",
     "rambusa_tea_drink_1": "Ambil 1 genggam daun rambusa kering",
     "rambusa_tea_drink_2": "300 ml air panas",
-    "rambusa_tea_drink_3": "Cuci dan keringkan daun rambusa selama 3–5 hari",
+    "rambusa_tea_drink_3": "Cuci dan keringkan daun rambusa selama 3-5 hari",
     "rambusa_tea_drink_4": "Seduh 1 satu sendok teh daun kering dengan air panas",
-    "rambusa_tea_drink_5": "Diamkan selama 5–10 menit, lalu saring",
+    "rambusa_tea_drink_5": "Diamkan selama 5-10 menit, lalu saring",
     "rambusa_tea_drink_6": "Minum selagi hangat",
 
     "rambusa_wound_title": "Mengubah Obat Luka",
     "rambusa_wound_desc": "Mengurangi rasa gatal dan mempercepat penyembuhan luka ringan",
     "rambusa_wound_1": "Cuci bersih daun rambusa",
     "rambusa_wound_2": "Tumbuk hingga halus, lalu oleskan pada luka atau kulit yang gatal",
-    "rambusa_wound_3": "Diamkan selama 15–20 menit, lalu bilas dengan air bersih",
+    "rambusa_wound_3": "Diamkan selama 15-20 menit, lalu bilas dengan air bersih",
     
     "tumpang_air" : "Tumpang Air",
     "tumpang_air_description" : "Tumpang air (Peperomia pellucida) adalah tanaman herba kecil yang tumbuh liar di daerah lembap dan teduh. Tanaman ini memiliki batang transparan, daun hijau mengkilap berbentuk hati, dan bunga kecil berwarna putih kehijauan. Tumpang air sering digunakan dalam pengobatan tradisional untuk mengatasi peradangan, asam urat, dan gangguan saluran kemih. Selain itu, tanaman ini juga bisa dikonsumsi sebagai sayuran atau lalapan.",
@@ -240,7 +240,7 @@
     "tumpang_air_herbal_drink_1": "Ambil 1 genggam daun tumpang air segar",
     "tumpang_air_herbal_drink_2": "500 ml air dan 1 sendok teh madu (opsional)",
     "tumpang_air_herbal_drink_3": "Cuci bersih daun tumpang air",
-    "tumpang_air_herbal_drink_4": "Rebus dalam 300 ml air mendidih selama 10–15 menit",
+    "tumpang_air_herbal_drink_4": "Rebus dalam 300 ml air mendidih selama 10-15 menit",
     "tumpang_air_herbal_drink_5": "Saring airnya dan biarkan hangat",
     "tumpang_air_herbal_drink_6": "Tambahkan madu jika diinginkan",
 
@@ -249,12 +249,12 @@
     "tumpang_air_tea_drink_1": "Ambil 1 genggam daun tumpang air kering",
     "tumpang_air_tea_drink_2": "300 ml air panas",
     "tumpang_air_tea_drink_3": "Cuci dan keringkan daun selama beberapa hari",
-    "tumpang_air_tea_drink_4": "Seduh dengan air panas selama 5–10 menit",
+    "tumpang_air_tea_drink_4": "Seduh dengan air panas selama 5-10 menit",
     "tumpang_air_tea_drink_5": "Saring dan minum hangat",
 
     "tumpang_air_wound_title": "Mengubah Obat Luka",
     "tumpang_air_wound_desc": "Menyembuhkan luka kecil dan mengurangi bengkak",
     "tumpang_air_wound_1": "Cuci bersih daun tumpang air",
     "tumpang_air_wound_2": "Tumbuk hingga halus, lalu tempelkan pada luka",
-    "tumpang_air_wound_3": "Diamkan selama 15–20 menit, lalu bilas dengan air bersih"
+    "tumpang_air_wound_3": "Diamkan selama 15-20 menit, lalu bilas dengan air bersih"
 }

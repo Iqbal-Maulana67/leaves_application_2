@@ -244,7 +244,7 @@ class _RambusaResult extends State<RambusaResult> {
                       ),
                       Container(
                         child: Text(
-                          "Tinospora cordifolia",
+                          "Passiflora foetida",
                           style: TextStyle(
                               fontFamily: "DMSans",
                               fontSize: 18,

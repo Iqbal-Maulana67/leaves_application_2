@@ -29,8 +29,7 @@ class _RatingPage extends State<RatingPage> {
                 'Please select your rate 1-5, input your email and feedback')),
       );
     } else {
-      var uri =
-          Uri.parse("https://fa6f-66-96-225-189.ngrok-free.app/api/send-rate/");
+      var uri = Uri.parse("http://167.99.66.37:8000/api/send-rate/");
       var request = http.MultipartRequest('POST', uri)
         ..fields.addAll({
           'rates': _selectedRate.toString(),

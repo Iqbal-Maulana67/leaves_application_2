@@ -348,7 +348,7 @@ class _HistoryPage extends State<HistoryPage> {
             //   ),
             // ),
             // ElevatedButton(onPressed: PrintHistory, child: Text("Print")),
-            ElevatedButton(onPressed: _deleteHistory, child: Text("HAPUS")),
+            // ElevatedButton(onPressed: _deleteHistory, child: Text("HAPUS")),
           ],
         ),
       ),
